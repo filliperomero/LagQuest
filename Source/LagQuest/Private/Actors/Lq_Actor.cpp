@@ -14,6 +14,9 @@ ALq_Actor::ALq_Actor()
 void ALq_Actor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	const bool bAuth = HasAuthority();
+	const ENetRole LocalRole = GetLocalRole();
 }
 
 void ALq_Actor::Tick(float DeltaTime)
