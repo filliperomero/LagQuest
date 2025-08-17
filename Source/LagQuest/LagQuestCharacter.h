@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interaction/Lq_Player.h"
 #include "Logging/LogMacros.h"
 #include "LagQuestCharacter.generated.h"
 
@@ -19,7 +20,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class ALagQuestCharacter : public ACharacter
+class ALagQuestCharacter : public ACharacter, public ILq_Player
 {
 	GENERATED_BODY()
 
@@ -30,6 +31,11 @@ class ALagQuestCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	/** ILq_Player Interface */
+	virtual USkeletalMeshComponent* GetSkeletalMesh_Implementation() const override;
+	virtual void GrantArmor_Implementation(float ArmorAmount) override;
+	/** ILq_Player Interface End */
 	
 protected:
 
@@ -92,5 +98,17 @@ public:
 
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-};
 
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+private:
+	UPROPERTY(Replicated)
+	float Armor { 0.f };
+
+	/** General Input Action */
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* GeneralInputAction;
+
+	void OnGeneralInput();
+};

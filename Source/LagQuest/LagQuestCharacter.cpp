@@ -11,6 +11,18 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "LagQuest.h"
+#include "Net/UnrealNetwork.h"
+
+USkeletalMeshComponent* ALagQuestCharacter::GetSkeletalMesh_Implementation() const
+{
+	return GetMesh();
+}
+
+void ALagQuestCharacter::GrantArmor_Implementation(float ArmorAmount)
+{
+	Armor += ArmorAmount;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Armor: %f"), Armor));
+}
 
 ALagQuestCharacter::ALagQuestCharacter()
 {
@@ -65,6 +77,9 @@ void ALagQuestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALagQuestCharacter::Look);
+
+		// General
+		EnhancedInputComponent->BindAction(GeneralInputAction, ETriggerEvent::Started, this, &ThisClass::OnGeneralInput);
 	}
 	else
 	{
@@ -130,4 +145,16 @@ void ALagQuestCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void ALagQuestCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, Armor);
+}
+
+void ALagQuestCharacter::OnGeneralInput()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Armor: %f"), Armor));
 }

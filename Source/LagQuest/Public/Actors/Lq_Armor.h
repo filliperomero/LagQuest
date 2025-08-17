@@ -42,4 +42,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Lag Quest")
 	FName RightFootSocket { NAME_None };
+
+	UPROPERTY(EditAnywhere, Category = "Lag Quest")
+	float ArmorAmount { 100.f };
 };

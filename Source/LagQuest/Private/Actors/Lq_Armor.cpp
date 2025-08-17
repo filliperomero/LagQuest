@@ -3,7 +3,7 @@
 #include "Actors/Lq_Armor.h"
 
 #include "Components/SphereComponent.h"
-#include "GameFramework/Character.h"
+#include "Interaction/Lq_Player.h"
 
 ALq_Armor::ALq_Armor()
 {
@@ -42,14 +42,19 @@ void ALq_Armor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	ACharacter* OverlappedCharacter = Cast<ACharacter>(OtherActor);
+	if (!OtherActor->HasAuthority()) return;
 
-	if (HasAuthority() && IsValid(OverlappedCharacter))
+	// This will only happen on the server
+	if (OtherActor->Implements<ULq_Player>())
 	{
+		USkeletalMeshComponent* CharacterMesh = ILq_Player::Execute_GetSkeletalMesh(OtherActor);
+		
 		// AttachToActor(OtherActor, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		SphereMesh->AttachToComponent(OverlappedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, HeadSocket);
-		BootMesh_R->AttachToComponent(OverlappedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, RightFootSocket);
-		BootMesh_L->AttachToComponent(OverlappedCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, LeftFootSocket);
+		SphereMesh->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, HeadSocket);
+		BootMesh_R->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, RightFootSocket);
+		BootMesh_L->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, LeftFootSocket);
+
+		ILq_Player::Execute_GrantArmor(OtherActor, ArmorAmount);
 	}
 }
 
