@@ -35,6 +35,7 @@ class ALagQuestCharacter : public ACharacter, public ILq_Player
 	/** ILq_Player Interface */
 	virtual USkeletalMeshComponent* GetSkeletalMesh_Implementation() const override;
 	virtual void GrantArmor_Implementation(float ArmorAmount) override;
+	virtual void IncrementPickupCount_Implementation() override;
 	/** ILq_Player Interface End */
 	
 protected:
@@ -103,12 +104,21 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_Armor)
 	float Armor { 0.f };
+
+	UPROPERTY(ReplicatedUsing=OnRep_PickupCount)
+	int32 PickupCount { 0 };
 
 	/** General Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* GeneralInputAction;
 
 	void OnGeneralInput();
+
+	UFUNCTION()
+	void OnRep_Armor();
+
+	UFUNCTION()
+	void OnRep_PickupCount(int32 PreviousValue);
 };

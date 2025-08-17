@@ -24,6 +24,11 @@ void ALagQuestCharacter::GrantArmor_Implementation(float ArmorAmount)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Armor: %f"), Armor));
 }
 
+void ALagQuestCharacter::IncrementPickupCount_Implementation()
+{
+	++PickupCount;
+}
+
 ALagQuestCharacter::ALagQuestCharacter()
 {
 	// Set size for collision capsule
@@ -152,9 +157,21 @@ void ALagQuestCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, Armor);
+	DOREPLIFETIME(ThisClass, PickupCount);
 }
 
 void ALagQuestCharacter::OnGeneralInput()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Armor: %f"), Armor));
+}
+
+void ALagQuestCharacter::OnRep_Armor()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Orange, FString::Printf(TEXT("Armor: %f (OnRep)"), Armor));
+}
+
+void ALagQuestCharacter::OnRep_PickupCount(int32 PreviousValue)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Previous Pickup Count: %d (OnRep)"), PreviousValue));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Pickup Count: %d (OnRep)"), PickupCount));
 }
