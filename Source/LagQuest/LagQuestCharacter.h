@@ -8,6 +8,7 @@
 #include "Logging/LogMacros.h"
 #include "LagQuestCharacter.generated.h"
 
+class ULq_HealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -36,6 +37,7 @@ class ALagQuestCharacter : public ACharacter, public ILq_Player
 	virtual USkeletalMeshComponent* GetSkeletalMesh_Implementation() const override;
 	virtual void GrantArmor_Implementation(float ArmorAmount) override;
 	virtual void IncrementPickupCount_Implementation() override;
+	virtual void AddHealth_Implementation(float HealthAmount) override;
 	/** ILq_Player Interface End */
 	
 protected:
@@ -124,4 +126,7 @@ private:
 	void OnRep_PickupCount(int32 PreviousValue);
 
 	bool bReplicatePickupCount { false };
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<ULq_HealthComponent> HealthComponent;
 };

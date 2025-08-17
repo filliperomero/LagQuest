@@ -30,6 +30,7 @@ void ALq_Pickup::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor->Implements<ULq_Player>())
 	{
 		ILq_Player::Execute_IncrementPickupCount(OtherActor);
+		ILq_Player::Execute_AddHealth(OtherActor, HealthValue);
 		Destroy();
 	}
 }

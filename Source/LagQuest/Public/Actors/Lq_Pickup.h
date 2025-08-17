@@ -26,4 +26,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereCollision;
+
+	UPROPERTY(EditAnywhere, Category = "Lag Quest")
+	float HealthValue { 50.f };
 };

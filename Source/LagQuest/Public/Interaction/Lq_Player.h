@@ -25,4 +25,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void IncrementPickupCount();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void AddHealth(float HealthAmount);
 };

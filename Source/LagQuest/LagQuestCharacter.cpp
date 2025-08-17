@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "LagQuest.h"
+#include "Components/Lq_HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 
 USkeletalMeshComponent* ALagQuestCharacter::GetSkeletalMesh_Implementation() const
@@ -27,6 +28,13 @@ void ALagQuestCharacter::GrantArmor_Implementation(float ArmorAmount)
 void ALagQuestCharacter::IncrementPickupCount_Implementation()
 {
 	++PickupCount;
+}
+
+void ALagQuestCharacter::AddHealth_Implementation(float HealthAmount)
+{
+	if (!IsValid(HealthComponent)) return;
+
+	HealthComponent->SetHealth(HealthComponent->GetHealth() + HealthAmount);
 }
 
 ALagQuestCharacter::ALagQuestCharacter()
@@ -65,6 +73,9 @@ ALagQuestCharacter::ALagQuestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	HealthComponent = CreateDefaultSubobject<ULq_HealthComponent>(TEXT("HealthComponent"));
+	HealthComponent->SetIsReplicated(true);
 }
 
 void ALagQuestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
