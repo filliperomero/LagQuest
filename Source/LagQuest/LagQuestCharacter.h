@@ -102,6 +102,7 @@ public:
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) override;
 
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_Armor)
@@ -121,4 +122,6 @@ private:
 
 	UFUNCTION()
 	void OnRep_PickupCount(int32 PreviousValue);
+
+	bool bReplicatePickupCount { false };
 };

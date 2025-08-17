@@ -155,14 +155,28 @@ void ALagQuestCharacter::DoJumpEnd()
 void ALagQuestCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME_CONDITION(ThisClass, Armor, COND_OwnerOnly);
+	
+	DOREPLIFETIME_CONDITION(ThisClass, PickupCount, COND_Custom);
+}
 
-	DOREPLIFETIME(ThisClass, Armor);
-	DOREPLIFETIME(ThisClass, PickupCount);
+void ALagQuestCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
+{
+	Super::PreReplication(ChangedPropertyTracker);
+
+	// If bReplicatePickupCount changes value, PickupCount will change replication status.
+	// NOTE - The value of bReplicatePickupCount only matters on the server.
+	DOREPLIFETIME_ACTIVE_OVERRIDE(ThisClass, PickupCount, bReplicatePickupCount);
 }
 
 void ALagQuestCharacter::OnGeneralInput()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Armor: %f"), Armor));
+	bReplicatePickupCount = !bReplicatePickupCount;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Armor));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Pickup Count: %d"), PickupCount));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
 }
 
 void ALagQuestCharacter::OnRep_Armor()
