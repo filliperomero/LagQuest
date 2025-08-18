@@ -215,6 +215,8 @@ void ALagQuestCharacter::OnRPCDelayTimer()
 		SpawnParameters.Owner = this;
 		
 		GetWorld()->SpawnActor<ALq_Actor>(GetActorLocation(), GetActorRotation(), SpawnParameters);
+
+		Multicast_PrintMessage("Print this on the server and all relevant clients.");
 	}
 }
 
@@ -239,4 +241,12 @@ void ALagQuestCharacter::Server_PrintMessage_Implementation(const FString& Messa
 	MessageString += Message;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, MessageString);
+}
+
+void ALagQuestCharacter::Multicast_PrintMessage_Implementation(const FString& Message)
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += Message;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, MessageString);
 }
