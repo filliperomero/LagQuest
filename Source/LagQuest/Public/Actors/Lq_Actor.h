@@ -17,6 +17,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(Client, Reliable)
+	void Client_PrintActorName();
+
 public:
 	virtual void Tick(float DeltaTime) override;
 };

@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "LagQuest.h"
+#include "Actors/Lq_Actor.h"
 #include "Components/Lq_HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -199,4 +200,34 @@ void ALagQuestCharacter::OnRep_PickupCount(int32 PreviousValue)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Previous Pickup Count: %d (OnRep)"), PreviousValue));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Pickup Count: %d (OnRep)"), PickupCount));
+}
+
+void ALagQuestCharacter::OnRPCDelayTimer()
+{
+	if (HasAuthority())
+	{
+		Client_PrintMessage("This should run on the owning Client.");
+
+		
+		FActorSpawnParameters SpawnParameters;
+		SpawnParameters.Owner = this;
+		
+		GetWorld()->SpawnActor<ALq_Actor>(GetActorLocation(), GetActorRotation(), SpawnParameters);
+	}
+
+}
+
+void ALagQuestCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(RPCDelayTimer, this, &ThisClass::OnRPCDelayTimer, 5.f, false);
+}
+
+void ALagQuestCharacter::Client_PrintMessage_Implementation(const FString& Message)
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += Message;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, MessageString);
 }

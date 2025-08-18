@@ -64,6 +64,7 @@ public:
 	ALagQuestCharacter();	
 
 protected:
+	virtual void BeginPlay() override;
 
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -129,4 +130,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ULq_HealthComponent> HealthComponent;
+
+	UFUNCTION(Client, Reliable)
+	void Client_PrintMessage(const FString& Message);
+
+	FTimerHandle RPCDelayTimer;
+
+	void OnRPCDelayTimer();
 };
