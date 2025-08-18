@@ -20,6 +20,11 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_PrintActorName();
 
+	UFUNCTION(Server, Reliable)
+	void Server_PrintActorName();
+
+	virtual void OnRep_Owner() override;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 };

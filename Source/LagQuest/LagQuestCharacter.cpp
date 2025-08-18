@@ -189,6 +189,8 @@ void ALagQuestCharacter::OnGeneralInput()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Armor));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Pickup Count: %d"), PickupCount));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
+
+	Server_PrintMessage("Please run this on the server.");
 }
 
 void ALagQuestCharacter::OnRep_Armor()
@@ -214,7 +216,6 @@ void ALagQuestCharacter::OnRPCDelayTimer()
 		
 		GetWorld()->SpawnActor<ALq_Actor>(GetActorLocation(), GetActorRotation(), SpawnParameters);
 	}
-
 }
 
 void ALagQuestCharacter::BeginPlay()
@@ -230,4 +231,12 @@ void ALagQuestCharacter::Client_PrintMessage_Implementation(const FString& Messa
 	MessageString += Message;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, MessageString);
+}
+
+void ALagQuestCharacter::Server_PrintMessage_Implementation(const FString& Message)
+{
+	FString MessageString = HasAuthority() ? "Server: " : "Client: ";
+	MessageString += Message;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, MessageString);
 }

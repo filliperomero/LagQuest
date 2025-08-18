@@ -134,6 +134,9 @@ private:
 	UFUNCTION(Client, Reliable)
 	void Client_PrintMessage(const FString& Message);
 
+	UFUNCTION(Server, Reliable)
+	void Server_PrintMessage(const FString& Message);
+
 	FTimerHandle RPCDelayTimer;
 
 	void OnRPCDelayTimer();
