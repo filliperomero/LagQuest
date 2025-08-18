@@ -190,7 +190,7 @@ void ALagQuestCharacter::OnGeneralInput()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Pickup Count: %d"), PickupCount));
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
 
-	Server_PrintMessage("Please run this on the server.");
+	Server_PrintMessage("");
 }
 
 void ALagQuestCharacter::OnRep_Armor()
@@ -241,6 +241,11 @@ void ALagQuestCharacter::Server_PrintMessage_Implementation(const FString& Messa
 	MessageString += Message;
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, MessageString);
+}
+
+bool ALagQuestCharacter::Server_PrintMessage_Validate(const FString& Message)
+{
+	return !Message.IsEmpty();
 }
 
 void ALagQuestCharacter::Multicast_PrintMessage_Implementation(const FString& Message)
