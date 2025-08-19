@@ -3,7 +3,9 @@
 #include "Actors/Lq_Pickup.h"
 
 #include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
 #include "Interaction/Lq_Player.h"
+#include "Player/Lq_PlayerState.h"
 
 ALq_Pickup::ALq_Pickup()
 {
@@ -31,8 +33,17 @@ void ALq_Pickup::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		ILq_Player::Execute_IncrementPickupCount(OtherActor);
 		ILq_Player::Execute_AddHealth(OtherActor, HealthValue);
-		Destroy();
 	}
+
+	if (ACharacter* OtherCharacter = Cast<ACharacter>(OtherActor); IsValid(OtherCharacter))
+	{
+		if (ALq_PlayerState* PlayerState = Cast<ALq_PlayerState>(OtherCharacter->GetPlayerState()); IsValid(PlayerState))
+		{
+			PlayerState->SetNumPickups(PlayerState->GetNumPickups() + 1);
+		}
+	}
+
+	Destroy();
 }
 
 void ALq_Pickup::BeginPlay()

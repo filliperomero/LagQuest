@@ -16,6 +16,7 @@
 #include "Game/Lq_GameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/Lq_PlayerState.h"
 
 USkeletalMeshComponent* ALagQuestCharacter::GetSkeletalMesh_Implementation() const
 {
@@ -211,7 +212,11 @@ void ALagQuestCharacter::OnGeneralInput()
 			GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Cyan, TeamMessage);
 		}
 	}
-	
+
+	if (ALq_PlayerState* PS = GetPlayerState<ALq_PlayerState>(); IsValid(PS))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Blue, FString::Printf(TEXT("Num Pickups: %d (Player State)"), PS->GetNumPickups()));
+	}
 }
 
 void ALagQuestCharacter::OnRep_Armor()
