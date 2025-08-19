@@ -13,6 +13,8 @@
 #include "LagQuest.h"
 #include "Actors/Lq_Actor.h"
 #include "Components/Lq_HealthComponent.h"
+#include "Game/Lq_GameState.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 USkeletalMeshComponent* ALagQuestCharacter::GetSkeletalMesh_Implementation() const
@@ -184,13 +186,32 @@ void ALagQuestCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPrope
 
 void ALagQuestCharacter::OnGeneralInput()
 {
-	bReplicatePickupCount = !bReplicatePickupCount;
-	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Armor));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Pickup Count: %d"), PickupCount));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
+	// bReplicatePickupCount = !bReplicatePickupCount;
+	//
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Armor: %f"), Armor));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("Pickup Count: %d"), PickupCount));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Emerald, FString::Printf(TEXT("bReplicatePickupCount: %d"), bReplicatePickupCount));
+	//
+	// Server_PrintMessage("");
 
-	Server_PrintMessage("");
+	if (ALq_GameState* GameState = Cast<ALq_GameState>(UGameplayStatics::GetGameState(this)); IsValid(GameState))
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(GetController()); IsValid(PlayerController))
+		{
+			FString TeamMessage= "Team ";
+			if (GameState->IsTeamOne(PlayerController))
+			{
+				TeamMessage += "One";
+			}
+			else
+			{
+				TeamMessage += "Two";
+			}
+
+			GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Cyan, TeamMessage);
+		}
+	}
+	
 }
 
 void ALagQuestCharacter::OnRep_Armor()

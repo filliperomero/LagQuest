@@ -6,9 +6,6 @@
 #include "GameFramework/GameMode.h"
 #include "Lq_GameMode.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class LAGQUEST_API ALq_GameMode : public AGameMode
 {
@@ -18,6 +15,7 @@ public:
 	ALq_GameMode();
 
 	virtual void StartMatch() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:
 	virtual void BeginPlay() override;
