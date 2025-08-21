@@ -1,13 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-
 #include "LagQuestPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
 #include "LagQuest.h"
+#include "Player/Lq_PlayerState.h"
 #include "Widgets/Input/SVirtualJoystick.h"
+#include "UI/Lq_PickupCountWidget.h"
 
 void ALagQuestPlayerController::BeginPlay()
 {
@@ -30,6 +31,22 @@ void ALagQuestPlayerController::BeginPlay()
 
 		}
 
+	}
+
+	if (!IsLocalController()) return;
+
+	PickupCountWidget = CreateWidget<ULq_PickupCountWidget>(this, PickupCountWidgetClass);
+	if (IsValid(PickupCountWidget))
+	{
+		PickupCountWidget->AddToViewport();
+	}
+
+	if (HasAuthority())
+	{
+		ALq_PlayerState* Lq_PlayerState = GetPlayerState<ALq_PlayerState>();
+		if (!IsValid(Lq_PlayerState)) return;
+
+		Lq_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
 	}
 }
 
@@ -58,4 +75,23 @@ void ALagQuestPlayerController::SetupInputComponent()
 			}
 		}
 	}
+}
+
+void ALagQuestPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if (!IsLocalController()) return;
+
+	ALq_PlayerState* Lq_PlayerState = GetPlayerState<ALq_PlayerState>();
+	if (!IsValid(Lq_PlayerState)) return;
+
+	Lq_PlayerState->OnPickupCountChanged.AddDynamic(this, &ThisClass::OnPickupCountChanged);
+}
+
+void ALagQuestPlayerController::OnPickupCountChanged(int32 InCount)
+{
+	if (!IsValid(PickupCountWidget)) return;
+	
+	PickupCountWidget->SetPickupCount(InCount);
 }

@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "LagQuestPlayerController.generated.h"
 
+class ULq_PickupCountWidget;
 class UInputMappingContext;
 class UUserWidget;
 
@@ -17,9 +18,8 @@ UCLASS(abstract)
 class ALagQuestPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
-protected:
 
+protected:
 	/** Input Mapping Contexts */
 	UPROPERTY(EditAnywhere, Category ="Input|Input Mappings")
 	TArray<UInputMappingContext*> DefaultMappingContexts;
@@ -41,4 +41,15 @@ protected:
 	/** Input mapping context setup */
 	virtual void SetupInputComponent() override;
 
+	virtual void OnRep_PlayerState() override;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ULq_PickupCountWidget> PickupCountWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<ULq_PickupCountWidget> PickupCountWidget;
+
+	UFUNCTION()
+	void OnPickupCountChanged(int32 InCount);
 };
