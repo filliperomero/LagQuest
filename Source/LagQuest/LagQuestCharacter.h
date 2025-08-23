@@ -58,6 +58,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	UPROPERTY(EditAnywhere, Category="Input")
+	UInputAction* ServerTravelAction;
+
 public:
 
 	/** Constructor */
@@ -76,6 +79,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void TravelToDestinationMap();
 
 public:
 

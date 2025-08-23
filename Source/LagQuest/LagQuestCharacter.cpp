@@ -100,6 +100,9 @@ void ALagQuestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// General
 		EnhancedInputComponent->BindAction(GeneralInputAction, ETriggerEvent::Started, this, &ThisClass::OnGeneralInput);
+
+		// Server Travel
+		EnhancedInputComponent->BindAction(ServerTravelAction, ETriggerEvent::Started, this, &ThisClass::TravelToDestinationMap);
 	}
 	else
 	{
@@ -123,6 +126,14 @@ void ALagQuestCharacter::Look(const FInputActionValue& Value)
 
 	// route the input
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
+}
+
+void ALagQuestCharacter::TravelToDestinationMap()
+{
+	if (HasAuthority())
+	{
+		GetWorld()->ServerTravel(TEXT("DestinationMap"));
+	}
 }
 
 void ALagQuestCharacter::DoMove(float Right, float Forward)

@@ -8,6 +8,7 @@
 ALq_GameMode::ALq_GameMode()
 {
 	bDelayedStart = true;
+	bUseSeamlessTravel = true;
 }
 
 void ALq_GameMode::StartMatch()
